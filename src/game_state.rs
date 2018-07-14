@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
-const FIELD_WIDTH: usize = 16;
-const FIELD_HEIGHT: usize = 16;
+pub const FIELD_WIDTH: usize = 16;
+pub const FIELD_HEIGHT: usize = 16;
 
 #[derive(Debug, PartialEq)]
 pub enum CellType {
@@ -16,6 +16,23 @@ pub struct GameState {
     pub pos_player_0: (usize, usize),
     pub pos_player_1: (usize, usize),
     field: Vec<CellType>,
+}
+
+fn idx_to_coord(idx: usize) -> (usize, usize) {
+    let y = idx / FIELD_WIDTH;
+    let x = idx - FIELD_WIDTH * y;
+    (x, y)
+}
+
+fn coord_to_idx(x: usize, y: usize) -> usize {
+    y * FIELD_WIDTH + x
+}
+
+impl GameState {
+    pub fn is_empty_at(&self, x: usize, y: usize) -> bool {
+        let idx = coord_to_idx(x, y);
+        self.field[idx] == CellType::Empty
+    }
 }
 
 impl FromStr for GameState {
@@ -54,8 +71,7 @@ impl FromStr for GameState {
 
         let pos_player_0 = match idx_player_0 {
             Some(idx) => {
-                let y = idx / FIELD_WIDTH;
-                let x = idx - FIELD_WIDTH * y;
+                let (x, y) = idx_to_coord(idx);
                 assert!(
                     x < FIELD_WIDTH && y < FIELD_HEIGHT,
                     "Position of player 0 is not within field!"
@@ -67,8 +83,7 @@ impl FromStr for GameState {
 
         let pos_player_1 = match idx_player_1 {
             Some(idx) => {
-                let y = idx / FIELD_WIDTH;
-                let x = idx - FIELD_WIDTH * y;
+                let (x, y) = idx_to_coord(idx);
                 assert!(
                     x < FIELD_WIDTH && y < FIELD_HEIGHT,
                     "Position of player 1 is not within field!"
