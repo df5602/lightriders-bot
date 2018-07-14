@@ -1,5 +1,6 @@
 extern crate rand;
 
+mod game_state;
 mod parser;
 
 use std::io;

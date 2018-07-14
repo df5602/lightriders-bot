@@ -1,5 +1,7 @@
 use std::str::FromStr;
 
+use game_state::GameState;
+
 #[derive(Debug, PartialEq)]
 pub enum Input {
     Timebank(usize),
@@ -10,7 +12,7 @@ pub enum Input {
     FieldWidth(usize),
     FieldHeight(usize),
     GameRound(usize),
-    GameField(String),
+    GameField(GameState),
     ActionMove(usize),
 }
 
@@ -37,7 +39,9 @@ pub fn parse(input: &str) -> Input {
         Some("update") => match iter.next() {
             Some("game") => match iter.next() {
                 Some("round") => Input::GameRound(usize::from_str(iter.next().unwrap()).unwrap()),
-                Some("field") => Input::GameField(iter.next().unwrap().to_owned()),
+                Some("field") => {
+                    Input::GameField(GameState::from_str(iter.next().unwrap()).unwrap())
+                }
                 Some(s) => panic!("Cannot parse unknown game update: {}", s),
                 None => panic!("Missing game update!"),
             },
@@ -108,8 +112,16 @@ mod tests {
 
     #[test]
     fn update_game_field() {
-        let parsed = parse("update game field .,.,.");
-        assert_eq!(Input::GameField(".,.,.".to_owned()), parsed);
+        let parsed = parse("update game field .,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,1,x,.,.,.,.,.,.,.,.,0,x,.,.,.,.,x,x,.,.,.,.,.,.,.,.,x,x,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.");
+        let game_state = match parsed {
+            Input::GameField(game_state) => game_state,
+            _ => {
+                assert!(false);
+                return;
+            }
+        };
+        assert_eq!((4, 4), game_state.pos_player_0);
+        assert_eq!((10, 3), game_state.pos_player_1);
     }
 
     #[test]
