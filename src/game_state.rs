@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
-pub const FIELD_WIDTH: usize = 16;
-pub const FIELD_HEIGHT: usize = 16;
+const FIELD_WIDTH: usize = 16;
+const FIELD_HEIGHT: usize = 16;
 
 #[derive(Debug, PartialEq)]
 pub enum CellType {
@@ -32,6 +32,14 @@ impl GameState {
     pub fn is_empty_at(&self, x: usize, y: usize) -> bool {
         let idx = coord_to_idx(x, y);
         self.field[idx] == CellType::Empty
+    }
+
+    pub fn width(&self) -> usize {
+        FIELD_WIDTH
+    }
+
+    pub fn height(&self) -> usize {
+        FIELD_HEIGHT
     }
 }
 

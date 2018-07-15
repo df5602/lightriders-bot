@@ -7,7 +7,7 @@ use std::io;
 
 use rand::Rng;
 
-use game_state::{GameState, FIELD_HEIGHT, FIELD_WIDTH};
+use game_state::GameState;
 use parser::Input;
 
 fn make_move(game_state: &GameState, bot_id: usize, rng: &mut rand::ThreadRng, _time_in_ms: usize) {
@@ -31,7 +31,7 @@ fn make_move(game_state: &GameState, bot_id: usize, rng: &mut rand::ThreadRng, _
                 }
             }
             1 => {
-                if y < FIELD_HEIGHT - 1 && game_state.is_empty_at(x, y + 1) {
+                if y < game_state.height() - 1 && game_state.is_empty_at(x, y + 1) {
                     println!("down");
                     break;
                 } else {
@@ -47,7 +47,7 @@ fn make_move(game_state: &GameState, bot_id: usize, rng: &mut rand::ThreadRng, _
                 }
             }
             3 => {
-                if x < FIELD_WIDTH - 1 && game_state.is_empty_at(x + 1, y) {
+                if x < game_state.width() - 1 && game_state.is_empty_at(x + 1, y) {
                     println!("right");
                     break;
                 } else {
