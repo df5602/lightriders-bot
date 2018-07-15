@@ -6,7 +6,7 @@ mod reachable;
 
 use std::io;
 
-use game_state::{CellType, GameState};
+use game_state::GameState;
 use parser::Input;
 
 enum Direction {
@@ -90,20 +90,7 @@ fn main() {
             Input::YourBotId(id) => bot_id = Some(id),
             Input::GameField(state) => game_state = Some(state),
             Input::ActionMove(t) => {
-                make_move(game_state.as_ref().unwrap(), bot_id.unwrap(), &mut rng, t);
-
-                // TODO: remove
-                let id = bot_id.unwrap();
-                let (x, y) = match id {
-                    0 => game_state.as_ref().unwrap().pos_player_0,
-                    1 => game_state.as_ref().unwrap().pos_player_1,
-                    _ => panic!("&&&"),
-                };
-                game_state.as_mut().unwrap().field[y * 16 + x] = CellType::Empty;
-                eprintln!(
-                    "Reachable cells: {}",
-                    reachable::count_reachable_cells(game_state.as_ref().unwrap(), x, y)
-                );
+                make_move(game_state.as_ref().unwrap(), bot_id.unwrap(), &mut rng, t)
             }
             s => eprintln!("Unhandled message: {:?}", s),
         }
