@@ -6,9 +6,12 @@ mod reachable;
 
 use std::io;
 
+use rand::Rng;
+
 use game_state::GameState;
 use parser::Input;
 
+#[derive(Copy, Clone)]
 enum Direction {
     Up,
     Down,
@@ -17,52 +20,66 @@ enum Direction {
     Pass,
 }
 
-fn make_move(
-    game_state: &GameState,
-    bot_id: usize,
-    _rng: &mut rand::ThreadRng,
-    _time_in_ms: usize,
-) {
+fn make_move(game_state: &GameState, bot_id: usize, rng: &mut rand::ThreadRng, _time_in_ms: usize) {
     let (x, y) = match bot_id {
         0 => game_state.pos_player_0,
         1 => game_state.pos_player_1,
         _ => panic!("Unknown bot ID: {}", bot_id),
     };
 
-    let mut max_reachability = 0;
-    let mut best_direction = Direction::Pass;
+    let mut moves: [(usize, Direction); 4] = [(0, Direction::Pass); 4];
+    let mut n = 1;
 
     if y > 0 && game_state.is_empty_at(x, y - 1) {
         let r = reachable::count_reachable_cells(game_state, x, y - 1);
-        if r > max_reachability {
-            max_reachability = r;
-            best_direction = Direction::Up;
+        if r > moves[0].0 {
+            moves[0] = (r, Direction::Up);
+            n = 1;
+        } else if r == moves[0].0 {
+            moves[n] = (r, Direction::Up);
+            n += 1;
         }
     }
 
     if y < game_state.height() - 1 && game_state.is_empty_at(x, y + 1) {
         let r = reachable::count_reachable_cells(game_state, x, y + 1);
-        if r > max_reachability {
-            max_reachability = r;
-            best_direction = Direction::Down;
+        if r > moves[0].0 {
+            moves[0] = (r, Direction::Down);
+            n = 1;
+        } else if r == moves[0].0 {
+            moves[n] = (r, Direction::Down);
+            n += 1;
         }
     }
 
     if x > 0 && game_state.is_empty_at(x - 1, y) {
         let r = reachable::count_reachable_cells(game_state, x - 1, y);
-        if r > max_reachability {
-            max_reachability = r;
-            best_direction = Direction::Left;
+        if r > moves[0].0 {
+            moves[0] = (r, Direction::Left);
+            n = 1;
+        } else if r == moves[0].0 {
+            moves[n] = (r, Direction::Left);
+            n += 1;
         }
     }
 
     if x < game_state.width() - 1 && game_state.is_empty_at(x + 1, y) {
         let r = reachable::count_reachable_cells(game_state, x + 1, y);
-        if r > max_reachability {
-            //max_reachability = r;
-            best_direction = Direction::Right;
+        if r > moves[0].0 {
+            moves[0] = (r, Direction::Right);
+            n = 1;
+        } else if r == moves[0].0 {
+            moves[n] = (r, Direction::Right);
+            n += 1;
         }
     }
+
+    let best_direction = if n == 1 {
+        moves[0].1
+    } else {
+        let dir = rng.gen_range(0, n);
+        moves[dir].1
+    };
 
     match best_direction {
         Direction::Up => println!("up"),

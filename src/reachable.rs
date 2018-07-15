@@ -10,7 +10,6 @@ enum CellReachability {
     Reachable,
 }
 
-#[allow(dead_code)]
 pub fn count_reachable_cells(game_state: &GameState, x: usize, y: usize) -> usize {
     if game_state.at(x, y) == CellType::Empty {
         let mut cells: Vec<CellReachability> = game_state
