@@ -3,7 +3,7 @@ use std::str::FromStr;
 const FIELD_WIDTH: usize = 16;
 const FIELD_HEIGHT: usize = 16;
 
-#[derive(Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub enum CellType {
     Empty,
     Wall,
@@ -15,7 +15,7 @@ pub enum CellType {
 pub struct GameState {
     pub pos_player_0: (usize, usize),
     pub pos_player_1: (usize, usize),
-    field: Vec<CellType>,
+    pub field: Vec<CellType>,
 }
 
 fn idx_to_coord(idx: usize) -> (usize, usize) {
@@ -32,6 +32,11 @@ impl GameState {
     pub fn is_empty_at(&self, x: usize, y: usize) -> bool {
         let idx = coord_to_idx(x, y);
         self.field[idx] == CellType::Empty
+    }
+
+    pub fn at(&self, x: usize, y: usize) -> CellType {
+        let idx = coord_to_idx(x, y);
+        self.field[idx]
     }
 
     pub fn width(&self) -> usize {
